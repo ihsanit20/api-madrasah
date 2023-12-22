@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return response(['Laravel' => app()->version()], 200);
+}); 
+
+Route::post('login', [UserController::class, 'login']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('user', [UserController::class, 'user']);
+    Route::post('logout', [UserController::class, 'logout']);
 });
+
+Route::any('/{any}', function ($any) {
+    return response("'{$any}' Not Found!", 404);
+})->where('any', '.*');
