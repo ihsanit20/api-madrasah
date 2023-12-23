@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,11 +19,13 @@ Route::get('/', function () {
     return response(['Laravel' => app()->version()], 200);
 }); 
 
-Route::post('login', [UserController::class, 'login']);
+Route::get('/app', AppController::class);
+
+Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('user', [UserController::class, 'user']);
-    Route::post('logout', [UserController::class, 'logout']);
+    Route::get('/user', [UserController::class, 'user']);
+    Route::post('/logout', [UserController::class, 'logout']);
 });
 
 Route::any('/{any}', function ($any) {
