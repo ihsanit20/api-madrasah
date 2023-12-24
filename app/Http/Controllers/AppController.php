@@ -25,8 +25,29 @@ class AppController extends Controller
         $data = [];
 
         $data["institute"] = [
-            "name" => "MSI Institute",
-            "logo" => "https://ui-avatars.com/api/?name=MSI+Institute",
+            "name" => [
+                "english"   => "MSI Institute",
+                "bengali"   => "মাদরাসার নাম",
+                "arabic"    => "الاسم عربي",
+            ],
+            "icon"  => "https://ui-avatars.com/api/?name=MSI+Institute",
+            "logo"  => "https://ui-avatars.com/api/?name=MSI+Institute",
+            "address"       => "House No, Road No, Village name",
+            "post_office"   => "Post office",
+            "area"          => "Upazilla or Area",
+            "district"      => "District name",
+            "phone"         => "0123456789",
+            "aulter_phone"  => "0123456789",
+            "whatsapp"      => "0123456789",
+            "email"         => "youremail@gmail.com",
+            "facebook"      => [
+                "name"  => "Facebook Page Name",
+                "link"  => "https://www.facebook.com/",
+            ],
+            "youtube"   => [
+                "name"  => "YouTube chanel name",
+                "link"  => "https://www.youtube.com/",
+            ],
         ];
 
         $data["is_logged_in"] = auth('sanctum')->check();
