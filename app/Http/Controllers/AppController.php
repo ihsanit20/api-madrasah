@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 class AppController extends Controller
 {
+    public static $domain = null;
+    public static $client = null;
+
     /**
      * Handle the incoming request.
      */
@@ -24,9 +27,12 @@ class AppController extends Controller
     {
         $data = [];
 
+        $data["domain"] = self::$domain;
+        $data["client"] = self::$client;
+
         $data["institute"] = [
             "name" => [
-                "english"   => "MSI Institute",
+                "english"   => "MSI Institute" . " : " . (self::$client["name"] ?? ""),
                 "bengali"   => "মাদরাসার নাম",
                 "arabic"    => "الاسم عربي",
             ],
