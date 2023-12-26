@@ -61,13 +61,16 @@ class DynamicDatabaseConnection
 
     protected function getClientDomainFromRequest($request)
     {
-        $referer = $request->headers->get('referer');
-        $referer = rtrim(preg_replace('/^http(|s)\:\/\/(www\.|)|www./','', $referer ), '/');
+        $origin = $request->header('Origin'); // For CORS requests
+        $referer = $request->header('Referer'); // Standard Referer header
+
+        // Use the one that is available or fits your use case
+        $domain = $origin ?? $referer;
+
+        $domain = rtrim(preg_replace('/^http(|s)\:\/\/(www\.|)|www./','', $domain ), '/');
         
-        $host = env('FORCE_FRONTEND_HOST', $referer);
+        $domain = env('FORCE_FRONTEND_HOST', $domain);
 
-        return $host;
-
-        // return explode('.', $host)[0];
+        return $domain;
     }
 }
