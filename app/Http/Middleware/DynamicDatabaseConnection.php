@@ -67,9 +67,11 @@ class DynamicDatabaseConnection
         // Use the one that is available or fits your use case
         $domain = $origin ?? $referer;
 
-        $domain = rtrim(preg_replace('/^http(|s)\:\/\/(www\.|)|www./','', $domain ), '/');
+        $domain = $request->segment(1) === 'php-artisan'
+            ? env('FORCE_ARTISAN_HOST', $domain)
+            : env('FORCE_FRONTEND_HOST', $domain);
         
-        $domain = env('FORCE_FRONTEND_HOST', $domain);
+        $domain = rtrim(preg_replace('/^http(|s)\:\/\/(www\.|)|www./','', $domain ), '/');
 
         return $domain;
     }
