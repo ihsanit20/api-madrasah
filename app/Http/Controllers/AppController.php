@@ -14,30 +14,56 @@ class AppController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // Get the domain from the request
-        $domain = $request->getHost();
-
-        // Use the domain to fetch data from the database
-        $data = $this->getDataForDomain($domain);
+        $data = self::$client
+            ? $this->clientAppData()
+            : $this->guestAppData();
 
         return response($data, 200);
     }
 
-    private function getDataForDomain($domain)
+    private function commonAppData()
     {
         $data = [];
 
-        $data["domain"] = self::$domain;
-        $data["client"] = self::$client;
+        $data["is_logged_in"] = auth('sanctum')->check();
 
+        $data["is_active_client"] = (boolean) (self::$client);
+
+        $data["domain"] = self::$domain;
+
+        return $data;
+    }
+
+    private function guestAppData()
+    {
+        $data = $this->commonAppData();
+        
+        $data["name"] = "Madrasah.cc";
+        $data["icon"] = "https://ui-avatars.com/api/?name=M";
+        $data["logo"] = "https://ui-avatars.com/api/?name=M";
+
+        return $data;
+    }
+
+    private function clientAppData()
+    {
+        $data = $this->commonAppData();
+        
+        $data["name"] = self::$client["name"];
+        $data["icon"] = "https://ui-avatars.com/api/?name=" . mb_substr(self::$client["name"], 0, 1);
+        $data["logo"] = "https://ui-avatars.com/api/?name=" . mb_substr(self::$client["name"], 0, 1);
+
+        return $data;
+
+        // should be remove
         $data["institute"] = [
             "name" => [
                 "english"   => "MSI Institute" . " : " . (self::$client["name"] ?? ""),
                 "bengali"   => "মাদরাসার নাম",
                 "arabic"    => "الاسم عربي",
             ],
-            "icon"  => "https://ui-avatars.com/api/?name=MSI+Institute",
-            "logo"  => "https://ui-avatars.com/api/?name=MSI+Institute",
+            "icon"  => "https://ui-avatars.com/api/?length=1&name=MSI+Institute",
+            "logo"  => "https://ui-avatars.com/api/?length=1&name=MSI+Institute",
             "address"       => "House No, Road No, Village name",
             "post_office"   => "Post office",
             "area"          => "Upazilla or Area",
@@ -55,8 +81,6 @@ class AppController extends Controller
                 "link"  => "https://www.youtube.com/",
             ],
         ];
-
-        $data["is_logged_in"] = auth('sanctum')->check();
 
         return $data;
     }
