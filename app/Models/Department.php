@@ -8,6 +8,7 @@ use App\Traits\Scopes\ScopeActive;
 use App\Traits\Scopes\ScopeFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Department extends Model
@@ -19,4 +20,11 @@ class Department extends Model
         'is_active',
         'description',
     ];
+
+    public function department_classes(): HasMany
+    {
+        return $this->hasMany(DepartmentClass::class)
+            ->orderBy('priority')
+            ;
+    }
 }

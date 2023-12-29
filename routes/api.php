@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\InstituteUpdateController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::apiResource('departments', DepartmentController::class);
+    Route::apiResource('departments.classes', DepartmentClassController::class);
 });
 
 Route::any('/{any}', function ($any) {
