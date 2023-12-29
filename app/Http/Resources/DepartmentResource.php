@@ -17,7 +17,7 @@ class DepartmentResource extends JsonResource
         return [
             "id"            => (int) ($this->id ?? 0),
             "name"          => (string) ($this->name ?? ""),
-            "author_id"     => (int) ($this->id ?? 0),
+            "author_id"     => (int) ($this->author_id ?? 0),
             "is_active"     => (bool) ($this->is_active ?? 0),
             "description"   => $this->when($this->isResource(), (string) ($this->description ?? "")),
         ];
