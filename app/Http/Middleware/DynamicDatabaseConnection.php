@@ -20,13 +20,21 @@ class DynamicDatabaseConnection
     public function handle(Request $request, Closure $next): Response
     {
         $domain = $this->getClientDomainFromRequest($request);
+        $app_key = $request->header('X-APP-KEY');
 
         // dd($domain);
 
         AppController::$domain = $domain;
 
         $client = Client::query()
-            ->where('domain', $domain)
+            ->where(function ($query) use ($domain, $app_key) {
+                if($domain) {
+                    $query->orWhere('domain', $domain);
+                }
+                if($app_key) {
+                    $query->orWhere('app_key', $app_key);
+                }
+            })
             ->active()
             ->first();
 
