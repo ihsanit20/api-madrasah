@@ -23,20 +23,29 @@ class DynamicDatabaseConnection
         $app_key = $request->header('X-APP-KEY');
 
         // dd($domain);
+        // dd($app_key);
 
         AppController::$domain = $domain;
 
-        $client = Client::query()
-            ->where(function ($query) use ($domain, $app_key) {
-                if($domain) {
-                    $query->orWhere('domain', $domain);
-                }
-                if($app_key) {
-                    $query->orWhere('app_key', $app_key);
-                }
-            })
-            ->active()
-            ->first();
+        $client = null;
+
+        if($domain || $app_key) {
+            $client = Client::query()
+                ->where(function ($query) use ($domain, $app_key) {
+                    if($domain) {
+                        $query->orWhere('domain', $domain);
+                    }
+                    if($app_key) {
+                        $query->orWhere('app_key', $app_key);
+                    }
+                })
+                ->active()
+                ->first();
+                
+            // dd($client);
+        }
+
+        // dd($client);
 
         if ($client) {
 

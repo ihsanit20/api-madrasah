@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('domain')->unique()->index();
+            $table->string('domain')->unique();
+            $table->string('app_key')->unique()->nullable();
             $table->string('db_host')->nullable();
             $table->string('db_name')->unique();
             $table->string('db_username');
