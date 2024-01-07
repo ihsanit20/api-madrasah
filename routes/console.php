@@ -17,3 +17,15 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('server', function () {
+    $port = env('APP_PORT', 1087);
+    $host = env('APP_HOST', gethostbyname(trim(`hostname`)));
+
+    $this->call('serve', [
+        '--port' => $port,
+        '--host' => $host,
+    ]);
+
+    $this->info("Server is running on port {$port} and host {$host}");
+})->purpose("Run server with custom port and host");
