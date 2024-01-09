@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\DepartmentClassController;
+use App\Http\Controllers\DepartmentClassSubjectController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\InstituteUpdateController;
@@ -39,6 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('departments', DepartmentController::class);
     Route::apiResource('departments.classes', DepartmentClassController::class);
+    Route::apiResource('departments.classes.subjects', DepartmentClassSubjectController::class);
 });
 
 Route::any('/{any}', function ($any) {

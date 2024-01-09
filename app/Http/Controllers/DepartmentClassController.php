@@ -29,11 +29,11 @@ class DepartmentClassController extends Controller
      */
     public function store(Request $request, Department $department)
     {
-        // return $this->getValidatedDate($request);
+        // return $this->getValidatedDate($department->id, $request);
 
         $department_class = $department->department_classes()
             ->create(
-                $this->getValidatedDate($department, $request)
+                $this->getValidatedDate($department->id, $request)
             );
 
         return response([
@@ -62,18 +62,21 @@ class DepartmentClassController extends Controller
      */
     public function update(Request $request, Department $department, $department_class_id)
     {
-        // return $this->getValidatedDate($request, $department->id);
+        // return $this->getValidatedDate($department->id, $request, $department_class->id);
 
         $department_class = $department->department_classes()
             ->where('id', $department_class_id)
             ->first();
 
         if($department_class) {
-            $department_class->update($this->getValidatedDate($department, $request, $department_class->id));
+            $department_class->update(
+                $this->getValidatedDate($department->id, $request, $department_class->id)
+            );
         }
 
         return response([
-            "department" => DepartmentClassResource::make($department_class),
+            "department" => DepartmentClassResource::make($department_class), // will be removed
+            "department_class" => DepartmentClassResource::make($department_class),
         ], 200);
     }
 
@@ -95,13 +98,13 @@ class DepartmentClassController extends Controller
         ], 200);
     }
 
-    protected function getValidatedDate($department, $request, $id = null)
+    protected function getValidatedDate($department_id, $request, $id = null)
     {
         return $request->validate([
             'name' => [
                 'required',
                 Rule::unique(DepartmentClass::class, 'name')
-                    ->where("department_id", $department->id)
+                    ->where("department_id", $department_id)
                     ->ignore($id)
             ],
             'description' => [
