@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartmentClassSubjectController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\InstituteUpdateController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/institute', [InstituteController::class, 'index']);
     Route::get('/institute/{key}', [InstituteController::class, 'show']);
     Route::put('/institute/{key}', [InstituteController::class, 'update']);
+
+    Route::apiResource('packages', PackageController::class);
 
     Route::apiResource('departments', DepartmentController::class);
     Route::apiResource('departments.classes', DepartmentClassController::class);
