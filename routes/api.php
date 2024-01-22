@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentClassSubjectController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\FeeController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\InstituteUpdateController;
+use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +43,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/institute/{key}', [InstituteController::class, 'update']);
 
     Route::apiResource('packages', PackageController::class);
+    Route::apiResource('fees', FeeController::class);
+
+    Route::apiResource('monthly-fees', MonthlyFeeController::class);
+    Route::apiResource('annual-fees', AnnualFeeController::class);
 
     Route::apiResource('departments', DepartmentController::class);
     Route::apiResource('departments.classes', DepartmentClassController::class);
