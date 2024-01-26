@@ -59,6 +59,38 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('departments.academic-sessions', DepartmentAcademicSessionController::class);
 });
 
+Route::get('/php-artisan/{command?}', function ($command = 'list') {
+
+    // dd(DB::connection('dynamic'));
+
+    $allowCommands = [
+        "migrate:install",
+        "migrate:status",
+        "migrate",
+    ];
+
+    if($command == 'list') {
+        return $allowCommands;
+    }
+
+    if(!in_array($command, $allowCommands)) {
+        return "Not Allow";
+    }
+
+    $parameters = [];
+
+    if(Config::get("database.default") == "dynamic") {
+
+        if($command == "migrate" || $command == "migrate:status") {
+            $parameters["--path"] = "/database/migrations/clients";
+        }
+    }
+
+    Artisan::call($command, $parameters);
+
+    dd(Artisan::output());
+});
+
 Route::any('/{any}', function ($any) {
     return response("'{$any}' Not Found!", 404);
 })->where('any', '.*');
