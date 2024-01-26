@@ -27,4 +27,11 @@ class Department extends Model
             ->orderBy('priority')
             ;
     }
+
+    public function academic_sessions(): HasMany
+    {
+        return $this->hasMany(AcademicSession::class)
+            ->orderBy('priority')
+            ;
+    }
 }

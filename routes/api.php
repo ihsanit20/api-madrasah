@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\DepartmentAcademicSessionController;
 use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentClassSubjectController;
 use App\Http\Controllers\DepartmentController;
@@ -11,6 +12,9 @@ use App\Http\Controllers\InstituteUpdateController;
 use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\UserController;
+
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +55,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('departments', DepartmentController::class);
     Route::apiResource('departments.classes', DepartmentClassController::class);
     Route::apiResource('departments.classes.subjects', DepartmentClassSubjectController::class);
+    
+    Route::apiResource('departments.academic-sessions', DepartmentAcademicSessionController::class);
 });
 
 Route::any('/{any}', function ($any) {
