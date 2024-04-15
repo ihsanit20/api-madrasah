@@ -14,6 +14,12 @@ class FeeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id"        => (int) ($this->id ?? 0),
+            "name"      => (string) ($this->name ?? ""),
+            "period"    => (int) ($this->period ?? 0),
+            "author_id" => (int) ($this->author_id ?? 0),
+            "author"    => $this->whenLoaded('author'),
+        ];
     }
 }

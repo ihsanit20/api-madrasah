@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('fees', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('author_id')->nullable()->constrained('users');
             $table->string('name')->unique();
             $table->unsignedTinyInteger('period')->comment('1 => Monthly, 2 => Annual');
             $table->timestamps();

@@ -19,7 +19,7 @@ class MonthlyFeeController extends Controller
     {
         FeeCollection::wrap('fees');
 
-        return FeeCollection::make(Fee::period(self::PERIOD)->paginate(request()->per_page));
+        return FeeCollection::make(Fee::with('author:id,name')->period(self::PERIOD)->paginate(request()->per_page));
     }
 
     /**

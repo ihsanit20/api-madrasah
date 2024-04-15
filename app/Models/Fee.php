@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuthor;
 use App\Traits\HasHistories;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Fee extends Model
 {
-    use HasFactory, HasHistories;
+    use HasFactory, HasHistories, HasAuthor;
 
     protected $fillable = [
         'name',

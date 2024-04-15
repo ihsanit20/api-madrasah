@@ -17,7 +17,7 @@ class FeeController extends Controller
     {
         FeeCollection::wrap('fees');
 
-        return FeeCollection::make(Fee::paginate(request()->per_page));
+        return FeeCollection::make(Fee::with('author:id,name')->paginate(request()->per_page));
     }
 
     /**
