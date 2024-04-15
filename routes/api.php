@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcademicSessionAcademicClassController;
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\DepartmentAcademicSessionController;
@@ -57,6 +58,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('departments.classes.subjects', DepartmentClassSubjectController::class);
     
     Route::apiResource('departments.academic-sessions', DepartmentAcademicSessionController::class);
+
+    Route::apiResource('academic-sessions.academic-classes', AcademicSessionAcademicClassController::class);
 });
 
 Route::get('/php-artisan/{command?}', function ($command = 'list') {
