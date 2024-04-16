@@ -6,17 +6,22 @@ use App\Http\Resources\AcademicClassCollection;
 use App\Http\Resources\AcademicClassResource;
 use App\Models\AcademicClass;
 use App\Models\AcademicSession;
+use App\Models\Department;
 use App\Models\DepartmentClass;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class AcademicSessionAcademicClassController extends Controller
+class DepartmentAcademicSessionAcademicClassController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(AcademicSession $academic_session)
+    public function index(Department $department, AcademicSession $academic_session)
     {
+        if($academic_session->department_id != $department->id) {
+            return $this->notFound();
+        }
+
         AcademicClassCollection::wrap('academic_classes');
 
         return AcademicClassCollection::make(
@@ -34,11 +39,11 @@ class AcademicSessionAcademicClassController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, AcademicSession $academic_session)
+    public function store(Request $request, Department $department, AcademicSession $academic_session)
     {
-        // return $request;
-
-        // return $request->department_classes;
+        if($academic_session->department_id != $department->id) {
+            return $this->notFound();
+        }
 
         // return
         $active_department_class_ids = DepartmentClass::query()
@@ -88,8 +93,12 @@ class AcademicSessionAcademicClassController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AcademicSession $academic_session, $academic_class_id)
+    public function show(Department $department, AcademicSession $academic_session, $academic_class_id)
     {
+        if($academic_session->department_id != $department->id) {
+            return $this->notFound();
+        }
+
         $academic_class = $academic_session->academic_classes()
             ->with('author')
             ->where('id', $academic_class_id)
