@@ -107,6 +107,8 @@ class DepartmentAcademicSessionController extends Controller
                     ->where("department_id", $department_id)
                     ->ignore($id)
             ],
+            'starting' => [],
+            'ending' => [],
             'is_active' => [
                 'sometimes',
                 'required',

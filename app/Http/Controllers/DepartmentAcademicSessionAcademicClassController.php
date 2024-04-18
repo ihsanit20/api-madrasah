@@ -22,18 +22,14 @@ class DepartmentAcademicSessionAcademicClassController extends Controller
             return $this->notFound();
         }
 
-        AcademicClassCollection::wrap('academic_classes');
+        // return 
+        $academic_classes = $academic_session->academic_classes()
+            ->oldest('priority')
+            ->get();
 
-        return AcademicClassCollection::make(
-            $academic_session->academic_classes()
-                ->with([
-                    // 'academic_session',
-                    // 'department_class',
-                    'academic_session:id,name',
-                    'department_class:id,name',
-                ])
-                ->paginate(request()->per_page)
-        );
+        return response([
+            "academic_classes" => $academic_classes,
+        ], 200);
     }
 
     /**
@@ -55,7 +51,9 @@ class DepartmentAcademicSessionAcademicClassController extends Controller
             ->toArray();
 
         // return
-        $filtered_department_class_ids = array_intersect($request->department_classes ?? [], $active_department_class_ids);
+        $filtered_department_class_ids = array_values(
+            array_intersect($request->department_classes ?? [], $active_department_class_ids)
+        );
 
         // return
         $academic_session->academic_classes()
