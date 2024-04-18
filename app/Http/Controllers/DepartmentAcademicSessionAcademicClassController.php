@@ -28,7 +28,7 @@ class DepartmentAcademicSessionAcademicClassController extends Controller
             ->get();
 
         return response([
-            "academic_classes" => $academic_classes,
+            "academic_classes" => AcademicClassCollection::make($academic_classes),
         ], 200);
     }
 
