@@ -41,11 +41,12 @@ Route::put('/app/institute/name', [InstituteUpdateController::class, 'name']);
 
 Route::post('/login', [UserController::class, 'login']);
 
+Route::get('/institute', [InstituteController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'user']);
     Route::post('/logout', [UserController::class, 'logout']);
 
-    Route::get('/institute', [InstituteController::class, 'index']);
     Route::get('/institute/{key}', [InstituteController::class, 'show']);
     Route::put('/institute/{key}', [InstituteController::class, 'update']);
 
