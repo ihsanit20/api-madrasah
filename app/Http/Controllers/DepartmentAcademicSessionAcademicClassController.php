@@ -24,6 +24,9 @@ class DepartmentAcademicSessionAcademicClassController extends Controller
 
         // return 
         $academic_classes = $academic_session->academic_classes()
+            ->with([
+                'department_class:id,name'
+            ])
             ->oldest('priority')
             ->get();
 
@@ -52,7 +55,7 @@ class DepartmentAcademicSessionAcademicClassController extends Controller
 
         // return
         $filtered_department_class_ids = array_values(
-            array_intersect($request->department_classes ?? [], $active_department_class_ids)
+            array_intersect($request->department_class_ids ?? [], $active_department_class_ids)
         );
 
         // return

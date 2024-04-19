@@ -22,6 +22,7 @@ class AcademicClassResource extends JsonResource
             "priority"              => (int) ($this->priority ?? 0),
             "is_active"             => (bool) ($this->is_active ?? false),
             "author"                => $this->whenLoaded('author'),
+            "department_class"      => $this->whenLoaded('department_class'),
         ];
     }
 }

@@ -20,10 +20,13 @@ class DepartmentAcademicSessionAcademicClassAcademicSubjectController extends Co
             return $this->notFound();
         }
 
-        AcademicSubjectCollection::wrap('academic_classes');
+        AcademicSubjectCollection::wrap('academic_subjects');
 
         return AcademicSubjectCollection::make(
             $academic_class->academic_subjects()
+                ->with([
+                    'department_class_subject:id,name'
+                ])
                 ->oldest('priority')
                 ->paginate(request()->per_page)
         );
@@ -48,7 +51,7 @@ class DepartmentAcademicSessionAcademicClassAcademicSubjectController extends Co
             ->toArray();
 
         // return
-        $filtered_department_class_subject_ids = array_intersect($request->department_class_subjects ?? [], $active_department_class_subject_ids);
+        $filtered_department_class_subject_ids = array_intersect($request->department_class_subject_ids ?? [], $active_department_class_subject_ids);
 
         // return
         $academic_class->academic_subjects()
