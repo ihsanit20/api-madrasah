@@ -16,22 +16,37 @@ class AdmissionForm extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'fathers_info'              => 'json',
-        'mothers_info'              => 'json',
+        'student_photo'             => 'json',
+
+        'basic_info'                => 'json',
+
+        'father_info'               => 'json',
+        'mother_info'               => 'json',
         'guardian_info'             => 'json',
 
         'present_address_info'      => 'json',
+        'is_same_address'           => 'bool',
         'permanent_address_info'    => 'json',
 
         'previous_info'             => 'json',
-
-        'is_same_address'           => 'bool',
     ];
 
     protected $appends = [
         'gender_text',
         'blood_group_text',
-        'resident_text',
+        'admission_form_id',
         'application_date',
     ];
+
+    public function getAdmissionFormIdAttribute()
+    {
+        return (int) ($this->id);
+    }
+
+    public function getApplicationDateAttribute()
+    {
+        return $this->created_at
+            ? $this->created_at->format('Y-m-d')
+            : "";
+    }
 }
