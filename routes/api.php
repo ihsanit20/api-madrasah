@@ -3,6 +3,7 @@
 use App\Http\Controllers\ADM\AdmissionFormController;
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\CommonDataController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassAcademicSubjectController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassPackageFeeController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\InstituteUpdateController;
+use App\Http\Controllers\LocationBDController;
 use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\UserController;
@@ -43,6 +45,18 @@ Route::put('/app/institute/name', [InstituteUpdateController::class, 'name']);
 Route::post('/login', [UserController::class, 'login']);
 
 Route::get('/institute', [InstituteController::class, 'index']);
+
+
+Route::prefix('common-data')->group(function () {
+    Route::get('/blood-groups', [CommonDataController::class, 'getBloodGroup']);
+    Route::get('/genders', [CommonDataController::class, 'getGenders']);
+});
+
+Route::prefix('location-bd')->group(function () {
+    Route::get('/divisions', [LocationBDController::class, 'divisions']);
+    Route::get('/divisions/{division}/districts', [LocationBDController::class, 'divisionDistricts']);
+    Route::get('/districts/{district}/areas', [LocationBDController::class, 'districtAreas']);
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'user']);
