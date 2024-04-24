@@ -55,7 +55,11 @@ Route::prefix('common-data')->group(function () {
 Route::prefix('location-bd')->group(function () {
     Route::get('/divisions', [LocationBDController::class, 'divisions']);
     Route::get('/divisions/{division}/districts', [LocationBDController::class, 'divisionDistricts']);
+    
+    Route::get('/districts', [LocationBDController::class, 'districts']);
     Route::get('/districts/{district}/areas', [LocationBDController::class, 'districtAreas']);
+
+    Route::get('/areas', [LocationBDController::class, 'areas']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
