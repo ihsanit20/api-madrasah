@@ -63,7 +63,7 @@ class LocationBDController extends Controller
 
         return Division::query()
             ->with($with)
-            ->select(DB::raw('id, en_name as name'))
+            ->select(DB::raw('id, name, en_name'))
             ->orderBy('en_name')
             ->get([
                 'id',
