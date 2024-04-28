@@ -49,4 +49,9 @@ class AdmissionForm extends Model
             ? $this->created_at->format('Y-m-d')
             : "";
     }
+
+    public function academic_class()
+    {
+        return $this->belongsTo(AcademicClass::class);
+    }
 }

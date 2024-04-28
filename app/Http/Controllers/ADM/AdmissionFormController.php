@@ -8,15 +8,14 @@ use Illuminate\Http\Request;
 
 class AdmissionFormController extends Controller
 {
-    const INSTITUTE_PROPERTIES = [
-        "student_photo" => "student_photo",
-        "basic_info" => "basic_info",
-    ];
-
     public function index()
     {
         return response([
-            'admission_forms' => AdmissionForm::get()
+            'admission_forms' => AdmissionForm::query()
+                ->with([
+                    'academic_class.department_class:id,name'
+                ])
+                ->get()
         ]);
     }
 
@@ -106,6 +105,8 @@ class AdmissionFormController extends Controller
             'previous_info',
             'present_address_info',
             'permanent_address_info',
+            'academic_class_id',
+            'package_id',
         ];
 
         $column = '';
