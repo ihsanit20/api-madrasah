@@ -21,19 +21,25 @@ class AdmissionFormController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'academic_session_id'   => 'required|numeric',
-            'admission_type'        => 'required',
+        $data = $request->validate([
+            'academic_session_id'       => 'required|numeric',
+            'admission_type'            => 'required|string',
+            "basic_info"                => 'required|array',
+            "father_info"               => 'required|array',
+            "mother_info"               => 'required|array',
+            "guardian_info"             => 'required|array',
+            "present_address_info"      => 'required|array',
+            "permanent_address_info"    => 'required|array',
+            "previous_info"             => 'required|array',
+            "academic_class_id"         => 'required|numeric',
+            "package_id"                => 'required|numeric',
         ]);
 
-        $admission_form = AdmissionForm::create([
-            'academic_session_id'   => $request->academic_session_id,
-            'admission_type'        => $request->admission_type,
-        ]);
+        // return response($data);
 
-        return response([
-            'admission_form' => $admission_form ?? (object) []
-        ], 201);
+        $admission_form = AdmissionForm::create($data);
+
+        return response($admission_form ?? (object) [], 201);
     }
 
     public function show(AdmissionForm $admission_form)
