@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\ADM;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PackageFeeCollection;
+use App\Models\AcademicClassPackageFee;
 use App\Models\AdmissionForm;
 use Illuminate\Http\Request;
 
@@ -135,5 +137,212 @@ class AdmissionFormController extends Controller
         }
 
         return response([]);
+    }
+
+    public function admissionTestShow(AdmissionForm $admission_form)
+    {
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+            "admission_test"        => (object) ($admission_form->admission_test ?? []),
+        ]);
+    }
+
+    public function admissionTestUpdate(Request $request, AdmissionForm $admission_form)
+    {
+        $request->validate([
+            'admission_test' => 'required',
+        ]);
+
+        // return
+        $admission_form->update([
+            'admission_test' => $request->admission_test,
+        ]);
+
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+            "admission_test"        => (object) ($admission_form->admission_test ?? []),
+        ]);
+    }
+
+    public function admissionFeeShow(AdmissionForm $admission_form)
+    {
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        // return
+        $academic_class_package_fees = AcademicClassPackageFee::query()
+            ->with('fee:id,name,period')
+            ->where([
+                'academic_class_id' => $admission_form->academic_class_id,
+                'package_id'        => $admission_form->package_id,
+            ])
+            ->get();
+
+        $annual_fees = [];
+        $monthly_fees = [];
+
+        foreach($academic_class_package_fees as $academic_class_package_fee) {
+            $data = [
+                "id"        => (int) ($academic_class_package_fee->fee_id ?? 0),
+                "amount"    => (double) ($academic_class_package_fee->amount ?? 0),
+                "name"      => (string) ($academic_class_package_fee->fee->name ?? ""),
+            ];
+
+            if($academic_class_package_fee->fee->period == 2) {
+                $annual_fees[] = $data;
+            } else {
+                $monthly_fees[] = $data;
+            }
+        }
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+
+            "concessions"           => (object) ($admission_form->concessions ?? []),
+
+            "annual_fees"           => (array) ($annual_fees ?? []),
+            "monthly_fees"          => (array) ($monthly_fees ?? []),
+        ]);
+    }
+
+    public function admissionFeeUpdate(Request $request, AdmissionForm $admission_form)
+    {
+        $request->validate([
+            'concessions' => 'required',
+        ]);
+
+        // return
+        $admission_form->update([
+            'concessions' => $request->concessions,
+        ]);
+
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        // return
+        $academic_class_package_fees = AcademicClassPackageFee::query()
+            ->with('fee:id,name,period')
+            ->where([
+                'academic_class_id' => $admission_form->academic_class_id,
+                'package_id'        => $admission_form->package_id,
+            ])
+            ->get();
+
+        $annual_fees = [];
+        $monthly_fees = [];
+
+        foreach($academic_class_package_fees as $academic_class_package_fee) {
+            $data = [
+                "id"        => (int) ($academic_class_package_fee->fee_id ?? 0),
+                "amount"    => (double) ($academic_class_package_fee->amount ?? 0),
+                "name"      => (string) ($academic_class_package_fee->fee->name ?? ""),
+            ];
+
+            if($academic_class_package_fee->fee->period == 2) {
+                $annual_fees[] = $data;
+            } else {
+                $monthly_fees[] = $data;
+            }
+        }
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+            
+            "concessions"           => (object) ($admission_form->concessions ?? []),
+
+            "annual_fees"           => (array) ($annual_fees ?? []),
+            "monthly_fees"          => (array) ($monthly_fees ?? []),
+        ]);
+    }
+
+    public function admissionCompletionShow(AdmissionForm $admission_form)
+    {
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        // return
+        $academic_class_package_fees = AcademicClassPackageFee::query()
+            ->with('fee:id,name,period')
+            ->where([
+                'academic_class_id' => $admission_form->academic_class_id,
+                'package_id'        => $admission_form->package_id,
+            ])
+            ->get();
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+        ]);
+    }
+
+    public function admissionCompletionUpdate(Request $request, AdmissionForm $admission_form)
+    {
+        /**
+         * Create Student for new admission from admission form
+         * Create Admission from admission form
+         */
+
+        // return
+        $admission_form->load([
+            'academic_class:id,department_class_id',
+            'academic_class.department_class:id,name',
+            'package:id,name',
+        ]);
+
+        if ($admission_form->status != 2) {
+            if($admission_form->type == 'new') {
+                // Create Student for new admission
+
+            }
+
+            // Create Admission 
+        }
+
+        return response([
+            "admission_form_id"     => (int) ($admission_form->id),
+            "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
+            "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
+            "package_name"          => (string) ($admission_form->package->name ?? ""),
+        ]);
     }
 }

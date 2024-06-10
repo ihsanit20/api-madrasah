@@ -29,6 +29,10 @@ class AdmissionForm extends Model
         'permanent_address_info'    => 'json',
 
         'previous_info'             => 'json',
+
+        'admission_test'            => 'json',
+        
+        'concessions'               => 'json',
     ];
 
     protected $appends = [
@@ -53,5 +57,10 @@ class AdmissionForm extends Model
     public function academic_class()
     {
         return $this->belongsTo(AcademicClass::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
     }
 }

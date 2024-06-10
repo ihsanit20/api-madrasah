@@ -20,6 +20,7 @@ class PackageFeeResource extends JsonResource
             "package_id"        => (int) ($this->package_id ?? 0),
             "fee_id"            => (int) ($this->fee_id ?? 0),
             "amount"            => (int) ($this->amount ?? 0),
+            "fee"               => $this->whenLoaded('fee'),
         ];
     }
 }

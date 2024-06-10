@@ -13,4 +13,9 @@ class AcademicClassPackageFee extends Model
     use HasFactory, SoftDeletes, HasAuthor, HasHistories;
 
     protected $guarded = [];
+
+    public function fee()
+    {
+        return $this->belongsTo(Fee::class);
+    }
 }
