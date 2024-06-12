@@ -14,26 +14,21 @@ return new class extends Migration
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedTinyInteger('academic_class_id');
             $table->unsignedTinyInteger('academic_session_id');
+            
+            $table->unsignedBigInteger('admission_form_id');
+            $table->unsignedTinyInteger('academic_class_id');
 
-            $table->unsignedTinyInteger('status')->default(1)->comment('1=Admission Form, 2=Fee Form, 3=Admission Complete');
+            $table->boolean('active')->default(1);
+
             $table->unsignedSmallInteger('roll')->nullable();
-            $table->string('previous_school')->nullable();
-            $table->string('previous_class')->nullable();
-            $table->string('previous_roll')->nullable();
-            $table->string('previous_result')->nullable();
-            $table->unsignedFloat('admission_test_mark')->nullable();
-            $table->json('verifications')->nullable();
-            $table->unsignedInteger('verified_by')->nullable();
+
+            $table->json('concessions')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique([
-                'student_id',
-                'academic_class_id',
-                'academic_session_id'
-            ], 'unique_student_id_academic_class_id_academic_session_id');
+            $table->unique(['student_id', 'academic_session_id']);
         });
     }
 

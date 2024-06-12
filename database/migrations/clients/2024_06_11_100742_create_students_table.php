@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('registration')->nullable();
+            $table->string('registration')->nullable()->unique();
 
             $table->boolean('active')->default(1);
 
             $table->unsignedTinyInteger('package_id');
+
+            $table->float('account')->default(0);
 
             $table->unsignedTinyInteger('gender')->nullable()->comment('1=Male, 2=Female');
             $table->unsignedTinyInteger('blood_group')->nullable();
