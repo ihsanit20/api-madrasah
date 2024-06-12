@@ -13,22 +13,23 @@ return new class extends Migration
     {
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id')->constrained('students');
-            $table->unsignedBigInteger('academic_session_id')->constrained('academic_sessions');
+            $table->foreignId('academic_session_id')->constrained('academic_sessions');
+            $table->foreignId('student_id')->constrained('students');
             
-            $table->unsignedBigInteger('academic_class_id')->constrained('academic_class_id');
-            $table->unsignedBigInteger('admission_form_id')->constrained('admission_forms');
+            $table->foreignId('academic_class_id')->constrained('academic_class_id');
+            $table->foreignId('admission_form_id')->constrained('admission_forms');
 
             $table->boolean('active')->default(1);
 
-            $table->unsignedSmallInteger('roll')->nullable();
+            $table->unsignedSmallInteger('roll');
 
             $table->json('concessions')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['student_id', 'academic_session_id']);
+            $table->unique(['academic_session_id', 'student_id']);
+            $table->unique(['academic_session_id', 'academic_class_id', 'roll']);
         });
     }
 

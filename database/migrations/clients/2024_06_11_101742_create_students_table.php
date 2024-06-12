@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->boolean('active')->default(1);
 
-            $table->unsignedTinyInteger('package_id')->constrained('packages');
+            $table->foreignId('package_id')->constrained('packages');
 
             $table->float('account')->default(0);
 
@@ -28,12 +28,12 @@ return new class extends Migration
             $table->string('birth_certificate')->nullable();
             $table->unsignedTinyInteger('blood_group')->nullable();
 
-            $table->unsignedBigInteger('father_info_id')->constrained('guardians');
-            $table->unsignedBigInteger('mother_info_id')->constrained('guardians');
-            $table->unsignedBigInteger('guardian_info_id')->constrained('guardians');
+            $table->foreignId('father_info_id')->constrained('guardians');
+            $table->foreignId('mother_info_id')->constrained('guardians');
+            $table->foreignId('guardian_info_id')->constrained('guardians');
 
-            $table->unsignedBigInteger('present_address_id')->constrained('addresses');
-            $table->unsignedBigInteger('permanent_address_id')->constrained('addresses');
+            $table->foreignId('present_address_id')->constrained('addresses');
+            $table->foreignId('permanent_address_id')->constrained('addresses');
 
             $table->timestamps();
             $table->softDeletes();

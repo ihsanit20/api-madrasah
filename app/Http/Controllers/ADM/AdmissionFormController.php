@@ -5,7 +5,9 @@ namespace App\Http\Controllers\ADM;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PackageFeeCollection;
 use App\Models\AcademicClassPackageFee;
+use App\Models\Address;
 use App\Models\AdmissionForm;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class AdmissionFormController extends Controller
@@ -330,12 +332,28 @@ class AdmissionFormController extends Controller
         ]);
 
         if ($admission_form->status != 2) {
-            if($admission_form->type == 'new') {
-                // Create Student for new admission
+            $student = Student::find((int) ($admission_form->student_id ?? 0));
 
+            $type = $admission_form->type === 'old' ? 'old' : 'new';
+
+            if($student && $type == 'old') {
+                $student->update(
+                    $this->validatedStudentData($request, $student->id)
+                    + $this->storeGuardian($request, $student)
+                    + $this->storeAddress($request, $student)
+                );
+            } else {
+                $student = Student::create(
+                    $this->validatedStudentData($request)
+                    + $this->storeGuardian($request)
+                    + $this->storeAddress($request)
+                );
             }
 
-            // Create Admission 
+            $admission = $student->admissions()->create(
+                $this->validatedAdmissionData($request)
+                + $this->getArrayOfSession($request->session)
+            );
         }
 
         return response([
@@ -343,6 +361,152 @@ class AdmissionFormController extends Controller
             "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
             "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
             "package_name"          => (string) ($admission_form->package->name ?? ""),
+            "student"               => $student,
+            "admission"             => $admission,
         ]);
+    }
+
+    protected function validatedStudentData($request, $id = '')
+    {
+        return $request->validate([
+            'name' => [
+                'required',
+                'string',
+            ],
+            'package_id' => [
+                'required',
+            ],
+            'date_of_birth'     => '',
+            'gender'            => '',
+            'birth_certificate' => '',
+            'blood_group'       => '',
+        ]);
+    }
+
+    protected function validatedAdmissionData($request, $id = '')
+    {
+        return $request->validate([
+            'academic_class_id' => [
+                'required',
+                'numeric',
+            ],
+        ]);
+    }
+
+    protected function storeGuardian($request, $student = null)
+    {
+        if($student) {
+            Guardian::query()
+                ->whereIn('id', [
+                    $student->father_info_id,
+                    $student->mother_info_id,
+                    $student->guardian_info_id
+                ])
+                ->delete();
+        }
+
+        $father_info_id = $this->storeGuardianGetId($request->father_info);
+
+        $mother_info_id = $this->storeGuardianGetId($request->mother_info);
+
+        if ($request->guardian_type == 1) {
+            $guardian_info_id = $father_info_id;
+        } 
+        elseif ($request->guardian_type == 2) {
+            $guardian_info_id = $mother_info_id;
+        }
+        else {
+            $guardian_info_id = $this->storeGuardianGetId($request->guardian_info);
+        }
+
+        return [
+            'father_info_id'    => $father_info_id,
+            'mother_info_id'    => $mother_info_id,
+            'guardian_info_id'  => $guardian_info_id,
+        ];
+    }
+
+    protected function storeAddress($request, $student = null)
+    {
+        if($student) {
+            Address::query()
+                ->whereIn('id', [
+                    $student->present_address_id,
+                    $student->permanent_address_id
+                ])
+                ->delete();
+        }
+
+        $present_address_id = $this->storeAddressGetId($request->present_address);
+
+        $permanent_address_id = $request->is_same_address
+            ? $present_address_id
+            : $this->storeAddressGetId($request->permanent_address);
+
+        return [
+            'present_address_id'    => $present_address_id,
+            'permanent_address_id'  => $permanent_address_id,
+        ];
+    }
+
+    protected function storeGuardianGetId($guardian, $old_id = '')
+    {
+        $response = Guardian::onlyTrashed()->updateOrCreate(
+            [],
+            [
+                'name'          => $guardian['name'] ?? null,
+                'phone'         => $guardian['phone'] ?? null,
+                'occupation'    => $guardian['occupation'] ?? null,
+                'relation'      => $guardian['relation'] ?? null,
+                'deleted_at'    => null,
+            ]
+        );
+
+        return $response->id ?? null;
+    }
+
+    protected function storeAddressGetId($address, $old_id = '')
+    {
+        if($old_id) {
+            Address::where('id', $old_id)->delete();
+        }
+
+        $response = Address::onlyTrashed()->updateOrCreate(
+            [],
+            [
+                'area_id'       => $address['area'] ?? null,
+                'value'         => $address['address'] ?? null,
+                'postoffice'    => $address['postoffice'] ?? null,
+                'deleted_at'    => null,
+            ]
+        );
+
+        return $response->id ?? null;
+    }
+
+    protected function getNewClassRoll($class_id, $session = null)
+    {
+        return  $this->getLastClassRoll($class_id, $session) + 1;
+    }
+
+    protected function getLastClassRoll($class_id, $session = null)
+    {
+        $session = $session_id ?? $this->getCurrentSession();
+
+        $last_class_roll = Admission::query()
+            ->where([
+                'class_id'      => $class_id,
+                'session'       => $session
+            ])
+            ->max('roll');
+
+        return $last_class_roll ?? 0;
+    }
+
+    protected function getArrayOfSession($session = null)
+    {
+        return [
+            "session" => $session ?? $this->getCurrentSession()
+        ];
     }
 }
