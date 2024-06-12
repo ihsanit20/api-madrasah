@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('academic_session_id')->constrained('academic_sessions');
             $table->foreignId('student_id')->constrained('students');
             
-            $table->foreignId('academic_class_id')->constrained('academic_class_id');
+            $table->foreignId('academic_class_id')->constrained('academic_classes');
             $table->foreignId('admission_form_id')->constrained('admission_forms');
 
             $table->boolean('active')->default(1);
