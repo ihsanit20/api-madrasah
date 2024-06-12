@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('area_id')->constrained();
+            $table->foreignId('area_id')->index();
             $table->string('value')->nullable();
             $table->string('postoffice')->nullable();
             $table->timestamps();

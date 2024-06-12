@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('admission_type')->default('new')->comment('new or old');
             $table->foreignId('academic_session_id')->constrained('academic_sessions');
 
-            $table->foreignId('student_id')->nullable()->constrained('academic_sessions');
+            $table->foreignId('student_id')->nullable()->constrained('students');
 
             $table->json('student_photo')->nullable();
 
