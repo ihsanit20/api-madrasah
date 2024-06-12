@@ -115,7 +115,6 @@ Route::get('/php-artisan/{command?}', function ($command = 'list') {
         "migrate:install",
         "migrate:status",
         "migrate",
-        "migrate:rollback",
     ];
 
     if($command == 'list') {
@@ -130,7 +129,7 @@ Route::get('/php-artisan/{command?}', function ($command = 'list') {
 
     if(Config::get("database.default") == "dynamic") {
 
-        if(in_array($command, ["migrate", "migrate:status", "migrate:rollback"])) {
+        if(in_array($command, ["migrate", "migrate:status"])) {
             $parameters["--path"] = "/database/migrations/clients";
         }
     }
