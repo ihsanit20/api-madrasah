@@ -37,7 +37,7 @@ class AdmissionFormController extends Controller
             "guardian_info"             => 'required|array',
             "present_address_info"      => 'required|array',
             "permanent_address_info"    => 'required|array',
-            "previous_info"             => 'required|array',
+            "previous_info"             => '',
             "academic_class_id"         => 'required|numeric',
             "package_id"                => 'required|numeric',
         ]);

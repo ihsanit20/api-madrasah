@@ -5,6 +5,7 @@ use App\Http\Controllers\ADM\AdmissionFormController;
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\CommonDataController;
+use App\Http\Controllers\CSM\DepartmentController as CSMDepartmentController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassAcademicSubjectController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassPackageFeeController;
@@ -63,6 +64,8 @@ Route::prefix('location-bd')->group(function () {
     Route::get('/areas', [LocationBDController::class, 'areas']);
 });
 
+Route::get('departments', [DepartmentController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'user']);
     Route::post('/logout', [UserController::class, 'logout']);
@@ -76,7 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('monthly-fees', MonthlyFeeController::class);
     Route::apiResource('annual-fees', AnnualFeeController::class);
 
-    Route::apiResource('departments', DepartmentController::class);
+    Route::apiResource('departments', DepartmentController::class)->except('index');
     Route::apiResource('departments.classes', DepartmentClassController::class);
     Route::apiResource('departments.classes.subjects', DepartmentClassSubjectController::class);
     
@@ -89,6 +92,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('departments.academic-sessions.academic-classes.academic-subjects', DepartmentAcademicSessionAcademicClassAcademicSubjectController::class);
     
     Route::apiResource('departments.academic-sessions.academic-classes.package-fees', DepartmentAcademicSessionAcademicClassPackageFeeController::class);
+
+    // csm : class and student management
+    Route::prefix('csm')->group(function () {
+        Route::get('/departments', [CSMDepartmentController::class, 'index']);
+        Route::get('/departments/academic-sessions/{academicSession}', [CSMDepartmentController::class, 'show']);
+    });
+
 
     // adm : admission management
     Route::prefix('adm')->group(function () {
