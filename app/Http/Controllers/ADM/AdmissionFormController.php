@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PackageFeeCollection;
 use App\Models\AcademicClassPackageFee;
 use App\Models\Address;
+use App\Models\Admission;
 use App\Models\AdmissionForm;
+use App\Models\Guardian;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -16,6 +18,7 @@ class AdmissionFormController extends Controller
     {
         return response([
             'admission_forms' => AdmissionForm::query()
+                ->status(1)
                 ->with([
                     'academic_class.department_class:id,name'
                 ])
@@ -317,18 +320,21 @@ class AdmissionFormController extends Controller
         ]);
     }
 
-    public function admissionCompletionUpdate(Request $request, AdmissionForm $admission_form)
+    public function admissionCompletionUpdate(AdmissionForm $admission_form)
     {
         /**
          * Create Student for new admission from admission form
          * Create Admission from admission form
          */
 
+        // return $admission_form;
+
         // return
         $admission_form->load([
             'academic_class:id,department_class_id',
             'academic_class.department_class:id,name',
             'package:id,name',
+            'admission.student',
         ]);
 
         if ($admission_form->status != 2) {
@@ -338,22 +344,42 @@ class AdmissionFormController extends Controller
 
             if($student && $type == 'old') {
                 $student->update(
-                    $this->validatedStudentData($request, $student->id)
-                    + $this->storeGuardian($request, $student)
-                    + $this->storeAddress($request, $student)
+                    $admission_form->basic_info
+                    + $this->storeGuardian($admission_form, $student)
+                    + $this->storeAddress($admission_form, $student)
+                    + [
+                        'package_id'    => $admission_form->package_id,
+                    ]
                 );
             } else {
                 $student = Student::create(
-                    $this->validatedStudentData($request)
-                    + $this->storeGuardian($request)
-                    + $this->storeAddress($request)
+                    $admission_form->basic_info
+                    + $this->storeGuardian($admission_form)
+                    + $this->storeAddress($admission_form)
+                    + [
+                        'registration'  => $this->getNewRegistration(),
+                        'package_id'    => $admission_form->package_id,
+                    ]
                 );
             }
 
-            $admission = $student->admissions()->create(
-                $this->validatedAdmissionData($request)
-                + $this->getArrayOfSession($request->session)
-            );
+            $new_roll = $this->getNewRoll($admission_form->academic_session_id, $admission_form->academic_class_id);
+
+            $admission = $student->admissions()->create([
+                'academic_session_id'   => $admission_form->academic_session_id,
+                'academic_class_id'     => $admission_form->academic_class_id,
+                'student_id'            => $student->id,
+                'admission_form_id'     => $admission_form->id,
+                'roll'                  => $new_roll,
+                'concessions'           => $admission_form->concessions,
+            ]);
+
+            $admission_form->update([
+                'status' => 2,
+            ]);
+        } else {
+            $admission = $admission_form->admission ?? ((object) []);
+            $student = $admission_form->admission->student ?? ((object) []);
         }
 
         return response([
@@ -366,34 +392,7 @@ class AdmissionFormController extends Controller
         ]);
     }
 
-    protected function validatedStudentData($request, $id = '')
-    {
-        return $request->validate([
-            'name' => [
-                'required',
-                'string',
-            ],
-            'package_id' => [
-                'required',
-            ],
-            'date_of_birth'     => '',
-            'gender'            => '',
-            'birth_certificate' => '',
-            'blood_group'       => '',
-        ]);
-    }
-
-    protected function validatedAdmissionData($request, $id = '')
-    {
-        return $request->validate([
-            'academic_class_id' => [
-                'required',
-                'numeric',
-            ],
-        ]);
-    }
-
-    protected function storeGuardian($request, $student = null)
+    protected function storeGuardian($admission_form, $student = null)
     {
         if($student) {
             Guardian::query()
@@ -405,28 +404,46 @@ class AdmissionFormController extends Controller
                 ->delete();
         }
 
-        $father_info_id = $this->storeGuardianGetId($request->father_info);
+        $father_info_id = $this->storeGuardianGetId($admission_form->father_info, "father");
 
-        $mother_info_id = $this->storeGuardianGetId($request->mother_info);
+        $mother_info_id = $this->storeGuardianGetId($admission_form->mother_info, "mother");
 
-        if ($request->guardian_type == 1) {
+        $guardian_type = $admission_form->guardian_info["type"] ?? 0;
+
+        if ($guardian_type == 1) {
             $guardian_info_id = $father_info_id;
         } 
-        elseif ($request->guardian_type == 2) {
+        elseif ($guardian_type == 2) {
             $guardian_info_id = $mother_info_id;
         }
         else {
-            $guardian_info_id = $this->storeGuardianGetId($request->guardian_info);
+            $guardian_info_id = $this->storeGuardianGetId($admission_form->guardian_info, "guardian");
         }
 
-        return [
-            'father_info_id'    => $father_info_id,
-            'mother_info_id'    => $mother_info_id,
-            'guardian_info_id'  => $guardian_info_id,
-        ];
+        return compact(
+            'father_info_id',
+            'mother_info_id',
+            'guardian_info_id',
+        );
     }
 
-    protected function storeAddress($request, $student = null)
+    protected function storeGuardianGetId($guardian, $occupation = null)
+    {
+        $response = Guardian::onlyTrashed()->updateOrCreate(
+            [],
+            [
+                'name'          => $guardian['name'] ?? null,
+                'phone'         => $guardian['phone'] ?? null,
+                'occupation'    => $guardian['occupation'] ?? $occupation,
+                'relation'      => $guardian['relation'] ?? null,
+                'deleted_at'    => null,
+            ]
+        );
+
+        return $response->id ?? null;
+    }
+
+    protected function storeAddress($admission_form, $student = null)
     {
         if($student) {
             Address::query()
@@ -437,32 +454,18 @@ class AdmissionFormController extends Controller
                 ->delete();
         }
 
-        $present_address_id = $this->storeAddressGetId($request->present_address);
+        $is_same_address = $admission_form->permanent_address_info["is_same_address"] ?? 0;
 
-        $permanent_address_id = $request->is_same_address
+        $present_address_id = $this->storeAddressGetId($admission_form->present_address_info);
+
+        $permanent_address_id = $is_same_address
             ? $present_address_id
-            : $this->storeAddressGetId($request->permanent_address);
+            : $this->storeAddressGetId($admission_form->permanent_address_info);
 
-        return [
-            'present_address_id'    => $present_address_id,
-            'permanent_address_id'  => $permanent_address_id,
-        ];
-    }
-
-    protected function storeGuardianGetId($guardian, $old_id = '')
-    {
-        $response = Guardian::onlyTrashed()->updateOrCreate(
-            [],
-            [
-                'name'          => $guardian['name'] ?? null,
-                'phone'         => $guardian['phone'] ?? null,
-                'occupation'    => $guardian['occupation'] ?? null,
-                'relation'      => $guardian['relation'] ?? null,
-                'deleted_at'    => null,
-            ]
+        return compact(
+            'present_address_id',
+            'permanent_address_id',
         );
-
-        return $response->id ?? null;
     }
 
     protected function storeAddressGetId($address, $old_id = '')
@@ -474,7 +477,7 @@ class AdmissionFormController extends Controller
         $response = Address::onlyTrashed()->updateOrCreate(
             [],
             [
-                'area_id'       => $address['area'] ?? null,
+                'area_id'       => $address['area_id'] ?? null,
                 'value'         => $address['address'] ?? null,
                 'postoffice'    => $address['postoffice'] ?? null,
                 'deleted_at'    => null,
@@ -484,29 +487,33 @@ class AdmissionFormController extends Controller
         return $response->id ?? null;
     }
 
-    protected function getNewClassRoll($class_id, $session = null)
+    protected function getNewRegistration()
     {
-        return  $this->getLastClassRoll($class_id, $session) + 1;
+        $current_year_total_student = Student::query()
+            ->whereYear('created_at', date('Y'))
+            ->count();
+
+        $new_student_serial = $current_year_total_student + 1;
+
+        $four_digit_serial_number = str_pad($new_student_serial, 4, "0", STR_PAD_LEFT);
+
+        return date('y') . $four_digit_serial_number;
     }
 
-    protected function getLastClassRoll($class_id, $session = null)
+    protected function getNewRoll($academic_session_id, $academic_class_id)
     {
-        $session = $session_id ?? $this->getCurrentSession();
+        return  $this->getLastMaxRoll($academic_session_id, $academic_class_id) + 1;
+    }
 
-        $last_class_roll = Admission::query()
+    protected function getLastMaxRoll($academic_session_id, $academic_class_id)
+    {
+        $last_max_roll = Admission::query()
             ->where([
-                'class_id'      => $class_id,
-                'session'       => $session
+                'academic_session_id'   => $academic_session_id,
+                'academic_class_id'     => $academic_class_id
             ])
             ->max('roll');
 
-        return $last_class_roll ?? 0;
-    }
-
-    protected function getArrayOfSession($session = null)
-    {
-        return [
-            "session" => $session ?? $this->getCurrentSession()
-        ];
+        return $last_max_roll ?? 0;
     }
 }

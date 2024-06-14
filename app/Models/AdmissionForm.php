@@ -54,6 +54,11 @@ class AdmissionForm extends Model
             : "";
     }
 
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
     public function academic_class()
     {
         return $this->belongsTo(AcademicClass::class);
@@ -62,5 +67,10 @@ class AdmissionForm extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function admission()
+    {
+        return $this->hasOne(Admission::class);
     }
 }
