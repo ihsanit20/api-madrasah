@@ -5,7 +5,6 @@ use App\Http\Controllers\ADM\AdmissionFormController;
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\CommonDataController;
-use App\Http\Controllers\CSM\DepartmentController as CSMDepartmentController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassAcademicSubjectController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassPackageFeeController;
@@ -94,11 +93,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('departments.academic-sessions.academic-classes.package-fees', DepartmentAcademicSessionAcademicClassPackageFeeController::class);
 
     // csm : class and student management
-    Route::prefix('csm')->group(function () {
-        Route::get('/departments', [CSMDepartmentController::class, 'index']);
-        Route::get('/departments/academic-sessions/{academicSession}', [CSMDepartmentController::class, 'show']);
-    });
-
+    Route::prefix('csm')->group(base_path('routes/api/csm.php'));
 
     // adm : admission management
     Route::prefix('adm')->group(function () {

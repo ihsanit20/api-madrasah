@@ -27,6 +27,11 @@ class Student extends Model
         'date_of_birth' => 'date',
     ];
     
+    public function getPhotoAttribute()
+    {
+        return "https://ui-avatars.com/api/?length=1&name={$this->name}";
+    }
+    
     public function getAgeAttribute()
     {
         if ($this->date_of_birth) {

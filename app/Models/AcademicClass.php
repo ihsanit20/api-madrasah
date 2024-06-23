@@ -7,6 +7,7 @@ use App\Traits\HasHistories;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,5 +30,15 @@ class AcademicClass extends Model
     public function academic_subjects(): HasMany
     {
         return $this->hasMany(AcademicSubject::class);
+    }
+
+    public function admissions(): HasMany
+    {
+        return $this->hasMany(Admission::class);
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'admissions', 'academic_class_id', 'student_id');
     }
 }
