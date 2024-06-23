@@ -12,12 +12,27 @@ class AcademicClassController extends Controller
     {
         // return
         $admissions = $academic_class->admissions()
-            ->with('student')
+            ->with([
+                'student.package',
+                'student.present_address.area.district',
+                'student.guardian_info',
+                'academic_class.department_class',
+            ])
             ->get();
 
         $students = $admissions->map(function ($admission) {
+            $address = $admission->student->present_address->value ?? '';
+            $area_name = $admission->student->present_address->area->name ?? '';
+            $district_name = $admission->student->present_address->area->district->name ?? '';
+
+            $full_address = "{$address}, {$area_name}, {$district_name}";
+
             return [
                 'admission_id'  => (int) ($admission->id),
+                'full_address'  => (string) ($full_address ?? ''),
+                'guardian_phone'=> (string) ($admission->student->guardian_info->phone ?? ''),
+                'package_name'  => (string) ($admission->student->package->name ?? ''),
+                'class_name'    => (string) ($admission->academic_class->department_class->name ?? ''),
                 'id'            => (int) ($admission->student->id ?? 0),
                 'name'          => (string) ($admission->student->name ?? ''),
                 'photo'         => (string) ($admission->student->photo ?? ''),

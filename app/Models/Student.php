@@ -88,4 +88,9 @@ class Student extends Model
     {
         return $this->hasMany(Admission::class);
     }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
 }
