@@ -404,11 +404,20 @@ class AdmissionFormController extends Controller
                 ->delete();
         }
 
-        $father_info_id = $this->storeGuardianGetId($admission_form->father_info, "father");
-
-        $mother_info_id = $this->storeGuardianGetId($admission_form->mother_info, "mother");
-
         $guardian_type = $admission_form->guardian_info["type"] ?? 0;
+        $guardian_phone = $admission_form->guardian_info["phone"] ?? "";
+
+        $father_info_id = $this->storeGuardianGetId(
+            $admission_form->father_info,
+            "father",
+            $guardian_type == 1 ? $guardian_phone : null
+        );
+
+        $mother_info_id = $this->storeGuardianGetId(
+            $admission_form->mother_info,
+            "mother",
+            $guardian_type == 2 ? $guardian_phone : null
+        );
 
         if ($guardian_type == 1) {
             $guardian_info_id = $father_info_id;
@@ -427,15 +436,15 @@ class AdmissionFormController extends Controller
         );
     }
 
-    protected function storeGuardianGetId($guardian, $occupation = null)
+    protected function storeGuardianGetId($guardian, $relation = null, $phone = null)
     {
         $response = Guardian::onlyTrashed()->updateOrCreate(
             [],
             [
                 'name'          => $guardian['name'] ?? null,
-                'phone'         => $guardian['phone'] ?? null,
-                'occupation'    => $guardian['occupation'] ?? $occupation,
-                'relation'      => $guardian['relation'] ?? null,
+                'phone'         => $guardian['phone'] ?? $phone,
+                'occupation'    => $guardian['occupation'] ?? null,
+                'relation'      => $guardian['relation'] ?? $relation,
                 'deleted_at'    => null,
             ]
         );
