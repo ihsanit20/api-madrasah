@@ -155,10 +155,15 @@ class AdmissionFormController extends Controller
 
         return response([
             "admission_form_id"     => (int) ($admission_form->id),
+            "academic_session_id"   => (int) ($admission_form->academic_session_id ?? 0),
+            "academic_class_id"     => (int) ($admission_form->academic_class_id ?? 0),
+            "status"                => (int) ($admission_form->status ?? 1),
+
             "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
             "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
             "package_name"          => (string) ($admission_form->package->name ?? ""),
             "admission_test"        => (object) ($admission_form->admission_test ?? []),
+            "status"                => (int) ($admission_form->status ?? 1),
         ]);
     }
 
@@ -226,6 +231,10 @@ class AdmissionFormController extends Controller
 
         return response([
             "admission_form_id"     => (int) ($admission_form->id),
+            "academic_session_id"   => (int) ($admission_form->academic_session_id ?? 0),
+            "academic_class_id"     => (int) ($admission_form->academic_class_id ?? 0),
+            "status"                => (int) ($admission_form->status ?? 1),
+
             "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
             "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
             "package_name"          => (string) ($admission_form->package->name ?? ""),
@@ -239,13 +248,9 @@ class AdmissionFormController extends Controller
 
     public function admissionFeeUpdate(Request $request, AdmissionForm $admission_form)
     {
-        $request->validate([
-            'concessions' => 'required',
-        ]);
-
         // return
         $admission_form->update([
-            'concessions' => $request->concessions,
+            'concessions' => (object) ($request->concessions ?? []),
         ]);
 
         // return
@@ -303,17 +308,12 @@ class AdmissionFormController extends Controller
             'package:id,name',
         ]);
 
-        // return
-        $academic_class_package_fees = AcademicClassPackageFee::query()
-            ->with('fee:id,name,period')
-            ->where([
-                'academic_class_id' => $admission_form->academic_class_id,
-                'package_id'        => $admission_form->package_id,
-            ])
-            ->get();
-
         return response([
             "admission_form_id"     => (int) ($admission_form->id),
+            "academic_session_id"   => (int) ($admission_form->academic_session_id ?? 0),
+            "academic_class_id"     => (int) ($admission_form->academic_class_id ?? 0),
+            "status"                => (int) ($admission_form->status ?? 1),
+
             "student_name"          => (string) ($admission_form->basic_info["name"] ?? ""),
             "academic_class_name"   => (string) ($admission_form->academic_class->department_class->name ?? ""),
             "package_name"          => (string) ($admission_form->package->name ?? ""),
