@@ -25,4 +25,9 @@ class Admission extends Model
     {
         return $this->belongsTo(AcademicClass::class);
     }
+
+    public function academic_session()
+    {
+        return $this->belongsTo(AcademicSession::class);
+    }
 }
