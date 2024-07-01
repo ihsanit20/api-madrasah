@@ -37,7 +37,7 @@ class Controller extends BaseController
     
         // Iterate over the period and store month names
         foreach ($period as $date) {
-            $months[] = $date->format('F Y'); // 'F' gives the full textual representation of a month (e.g., January)
+            $months[$date->format('Y-m')] = $date->format('F Y'); // 'F' gives the full textual representation of a month (e.g., January)
         }
     
         // Return the array of month names
