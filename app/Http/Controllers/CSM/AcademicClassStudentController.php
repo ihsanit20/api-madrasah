@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicClass;
 use App\Models\AcademicClassPackageFee;
 use App\Models\Admission;
+use App\Models\PaymentDetail;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -26,6 +27,22 @@ class AcademicClassStudentController extends Controller
 
         // return
         $months = $this->getAcademicSessionMonths($academic_session);
+
+        $paid_monthly_months = PaymentDetail::query()
+            ->whereHas('payment', function ($query) use ($admission) {
+                $query->where('admission_id', $admission->id);
+            })
+            ->where('period', 1)
+            ->pluck('month')
+            ->toArray();
+
+        $paid_annual_fee_ids = PaymentDetail::query()
+            ->whereHas('payment', function ($query) use ($admission) {
+                $query->where('admission_id', $admission->id);
+            })
+            ->where('period', 2)
+            ->pluck('fee_id')
+            ->toArray();
 
         // return
         $academic_class_package_fees = AcademicClassPackageFee::query()
@@ -50,8 +67,14 @@ class AcademicClassStudentController extends Controller
         $monthly_fees = [];
 
         foreach($academic_class_package_fees->get(2) as $academic_class_package_fee) {
+            $fee_id = $academic_class_package_fee?->fee_id ?? '';
+
+            if(!$fee_id || in_array($fee_id, $paid_annual_fee_ids)) {
+                continue;
+            }
+
             $data = [
-                'fee_id'    => (int) ($academic_class_package_fee?->fee_id ?? ''),
+                'fee_id'    => (int) ($fee_id),
                 'period'    => (int) (2),
                 'month'     => (string) (""),
                 'name'      => (string) ($academic_class_package_fee?->fee?->name ?? ''),
@@ -63,6 +86,10 @@ class AcademicClassStudentController extends Controller
         }
         
         foreach ($months as $month_value => $month_text) {
+            if(in_array($month_value, $paid_monthly_months)) {
+                continue;
+            }
+
             $data = [
                 'fee_id'    => (int) (0),
                 'period'    => (int) (1),
@@ -98,9 +125,10 @@ class AcademicClassStudentController extends Controller
                 'id'            => (int) ($student->id ?? 0),
                 'name'          => (string) ($student->name ?? ''),
                 'photo'         => (string) ($student->photo ?? ''),
-                'roll'          => (int) ($admission->roll ?? 0),
-
                 'registration'  => (string) ($student->registration ?? ''),
+                'account'       => (double) ($student->account ?? 0),
+                
+                'roll'          => (int) ($admission->roll ?? 0),
                 'full_address'  => (string) ($full_address ?? ''),
                 'guardian_phone'=> (string) ($student->guardian_info->phone ?? ''),
                 'package_name'  => (string) ($student->package->name ?? ''),

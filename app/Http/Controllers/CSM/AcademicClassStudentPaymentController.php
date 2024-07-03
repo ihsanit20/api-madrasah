@@ -12,6 +12,26 @@ use Illuminate\Http\Request;
 
 class AcademicClassStudentPaymentController extends Controller
 {
+    public function index(AcademicClass $academic_class, Student $student)
+    {
+        $admission = Admission::query()
+            // ->with('academic_session')
+            ->where([
+                'academic_class_id' => $academic_class->id,
+                'student_id'        => $student->id,
+            ])
+            ->firstOrFail();
+
+        $payments = Payment::query()
+            ->where('admission_id', $admission->id)
+            ->with('payment_details')
+            ->get();
+
+        return response([
+            "payments" => $payments,
+        ]);
+    }
+
     public function store(Request $request, AcademicClass $academic_class, Student $student)
     {
         // return $request;
@@ -43,16 +63,22 @@ class AcademicClassStudentPaymentController extends Controller
             'due'           => $due,
         ]);
 
+        if($due && $due != 0) {
+            $student->update([
+                'account' => $student->account - $due
+            ]);
+        }
+
         $data = [];
 
         foreach($fees as $fee) {
             $data[] = [
                 'payment_id'    => $payment->id,
-                'period'        => $fee->period,
-                'fee_id'        => $fee->fee_id,
-                'month'         => $fee->month,
-                'title'         => $fee->name,
-                'amount'        => $fee->amount,
+                'period'        => $fee['period'],
+                'fee_id'        => $fee['fee_id'],
+                'month'         => $fee['month'],
+                'title'         => $fee['name'],
+                'amount'        => $fee['amount'],
             ];
         }
 

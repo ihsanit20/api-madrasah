@@ -14,5 +14,6 @@ Route::get('/academic-classes/{academic_class}/students', [AcademicClassControll
 
 Route::get('/academic-classes/{academic_class}/students/{student}', [AcademicClassStudentController::class, 'show']);
 
+Route::get('/academic-classes/{academic_class}/students/{student}/payments', [AcademicClassStudentPaymentController::class, 'index']);
 Route::post('/academic-classes/{academic_class}/students/{student}/payments', [AcademicClassStudentPaymentController::class, 'store']);
 Route::get('/academic-classes/{academic_class}/students/{student}/payments/{payment}', [AcademicClassStudentPaymentController::class, 'show']);
