@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('date');
             $table->unsignedFloat('total');
             $table->unsignedFloat('paid');
+            $table->float('previous_due')->default(0);
             $table->float('due')->default(0);
             $table->timestamps();
             $table->softDeletes();

@@ -44,7 +44,11 @@ class AcademicClassStudentPaymentController extends Controller
 
         $deposit = $request->deposit;
 
-        $due = $total - $deposit;
+        $previous_due = -($student->account);
+        
+        $due = ($total + $previous_due) - $deposit;
+
+        $student_account_new_amount = ($student->account + $previous_due) - $due;
 
         $admission = Admission::query()
             // ->with('academic_session')
@@ -60,12 +64,13 @@ class AcademicClassStudentPaymentController extends Controller
             'date'          => date('Y-m-d'),
             'total'         => $total,
             'paid'          => $deposit,
+            'previous_due'  => $previous_due,
             'due'           => $due,
         ]);
 
-        if($due && $due != 0) {
+        if($student_account_new_amount != $student->account) {
             $student->update([
-                'account' => $student->account - $due
+                'account' => $student_account_new_amount
             ]);
         }
 
