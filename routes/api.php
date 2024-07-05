@@ -107,7 +107,7 @@ Route::get('/php-artisan/{command?}', function ($command = 'list') {
         "migrate:install",
         "migrate:status",
         "migrate",
-        "migrate:rollback",
+        // "migrate:rollback",
     ];
 
     if($command == 'list') {
