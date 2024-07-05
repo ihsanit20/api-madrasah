@@ -10,6 +10,8 @@ class PaymentDetail extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public $timestamps = false;
+    
     protected $guarded = [];
 
     public function payment()

@@ -14,6 +14,7 @@ class AcademicClassStudentController extends Controller
 {
     public function show(AcademicClass $academic_class, Student $student)
     {
+        // return
         $admission = Admission::query()
             // ->with('academic_session')
             ->where([
@@ -44,6 +45,8 @@ class AcademicClassStudentController extends Controller
             ->pluck('fee_id')
             ->toArray();
 
+        AcademicClassPackageFee::$concessions = $admission->concessions;
+
         // return
         $academic_class_package_fees = AcademicClassPackageFee::query()
             ->with('fee:id,name,period')
@@ -59,7 +62,8 @@ class AcademicClassStudentController extends Controller
 
         // return $academic_class_package_fees->get(2);
 
-        $monthly_total = $academic_class_package_fees->get(1)?->sum('amount') ?? 0;
+        $monthly_total_amount = $academic_class_package_fees->get(1)?->sum('amount') ?? 0;
+        $monthly_total_concession = $academic_class_package_fees->get(1)?->sum('concession') ?? 0;
 
         // Prepare the fees array
         $fees = [];
@@ -79,6 +83,7 @@ class AcademicClassStudentController extends Controller
                 'month'     => (string) (""),
                 'name'      => (string) ($academic_class_package_fee?->fee?->name ?? ''),
                 'amount'    => (int) ($academic_class_package_fee?->amount ?? 0),
+                'concession' => (int) ($academic_class_package_fee?->concession ?? 0),
             ];
 
             $fees[] = $data;
@@ -95,7 +100,8 @@ class AcademicClassStudentController extends Controller
                 'period'    => (int) (1),
                 'month'     => (string) ($month_value),
                 'name'      => (string) ("Fee of {$month_text}"),
-                'amount'    => (int) ($monthly_total ?? 0),
+                'amount'    => (int) ($monthly_total_amount ?? 0),
+                'concession' => (int) ($monthly_total_concession ?? 0),
             ];
 
             $fees[] = $data;
@@ -121,6 +127,7 @@ class AcademicClassStudentController extends Controller
         return response([
             'admission_id'  => (int) ($admission->id),
             'student_id'    => (int) ($student->id),
+            'concessions'   => (object) ($admission->concessions ?? []),
             'student'   => [
                 'id'            => (int) ($student->id ?? 0),
                 'name'          => (string) ($student->name ?? ''),

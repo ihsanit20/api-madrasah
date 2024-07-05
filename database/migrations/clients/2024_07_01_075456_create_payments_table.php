@@ -16,10 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('admission_id')->index();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('date');
-            $table->unsignedFloat('total');
+            $table->unsignedFloat('total_amount');
+            $table->unsignedFloat('total_concession');
             $table->unsignedFloat('paid');
             $table->float('previous_due')->default(0);
-            $table->float('due')->default(0);
+            $table->float('current_due')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

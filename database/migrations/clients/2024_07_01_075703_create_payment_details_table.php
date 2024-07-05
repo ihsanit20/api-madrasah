@@ -14,13 +14,20 @@ return new class extends Migration
         Schema::create('payment_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('payment_id')->index();
+
+            $table->unsignedBigInteger('admission_id')->index();
             $table->unsignedBigInteger('fee_id')->index()->nullable();
             $table->string('month')->nullable();
+
             $table->unsignedTinyInteger('period');
             $table->string('title');
+
             $table->float('amount');
-            $table->timestamps();
+            $table->float('concession')->default(0);
+
             $table->softDeletes();
+
+            $table->unique(['admission_id', 'fee_id', 'month']);
         });
     }
 

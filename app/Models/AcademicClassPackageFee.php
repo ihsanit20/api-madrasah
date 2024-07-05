@@ -10,9 +10,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AcademicClassPackageFee extends Model
 {
+    public static $concessions = [];
+
     use HasFactory, SoftDeletes, HasAuthor, HasHistories;
 
     protected $guarded = [];
+
+    protected $appends = [
+        'concession',
+    ];
+
+    public function getAmountAttribute($value)
+    {
+        return $value - (self::$concessions[$this->fee_id] ?? 0);
+    }
+
+    public function getConcessionAttribute()
+    {
+        return (self::$concessions[$this->fee_id] ?? 0);
+    }
 
     public function fee()
     {
