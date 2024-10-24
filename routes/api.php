@@ -135,3 +135,7 @@ Route::get('/php-artisan/{command?}', function ($command = 'list') {
 Route::any('/{any}', function ($any) {
     return response("'{$any}' Not Found!", 404);
 })->where('any', '.*');
+
+
+// for client DB migration command 'php artisan migrate:clients'
+// for client DB migration status command 'php artisan migrate:clients --status'
