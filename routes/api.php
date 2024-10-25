@@ -4,6 +4,7 @@ use App\Http\Controllers\AcademicSessionAcademicClassController;
 use App\Http\Controllers\ADM\AdmissionFormController;
 use App\Http\Controllers\AnnualFeeController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommonDataController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassAcademicSubjectController;
 use App\Http\Controllers\DepartmentAcademicSessionAcademicClassController;
@@ -38,6 +39,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return response(['Laravel' => app()->version()], 200);
 }); 
+
+Route::post('/admin-register', [AuthController::class, 'adminRegister']);
+Route::post('/admin-login', [AuthController::class, 'adminLogin']);
+Route::post('/student-login', [AuthController::class, 'studentLogin']);
+
 
 Route::get('/app', AppController::class);
 
