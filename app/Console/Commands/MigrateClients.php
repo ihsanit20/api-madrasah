@@ -43,40 +43,44 @@ class MigrateClients extends Command
             Config::set('database.default', 'dynamic');
             DB::reconnect('dynamic');
     
+            // Check and create migrations table if not exists
             if (!Schema::hasTable('migrations')) {
-                $this->error('Migration table does not exist for client: ' . $client->db_name);
-                continue;
+                $this->info('Creating migrations table for client: ' . $client->db_name);
+                Artisan::call('migrate:install', ['--database' => 'dynamic']);
+                $this->info('Migration table created for client: ' . $client->db_name);
             }
     
             if ($this->option('status')) {
                 $this->info('Checking migration status for client: ' . $client->db_name);
-    
+            
+                // সম্পন্ন করা মাইগ্রেশন চেক করা
                 $completedMigrations = DB::table('migrations')->pluck('migration')->toArray();
+                
+                // মাইগ্রেশন ফাইলগুলো খুঁজে পাওয়া
                 $migrationFiles = glob(database_path('migrations/clients') . '/*.php');
                 $pendingMigrations = [];
-    
+            
                 foreach ($migrationFiles as $file) {
                     $migrationName = basename($file, '.php');
                     if (!in_array($migrationName, $completedMigrations)) {
                         $pendingMigrations[] = $migrationName;
                     }
                 }
-    
-                // Display pending migrations in yellow
+            
+                // পেন্ডিং মাইগ্রেশনগুলো দেখানো (হলুদ রঙে)
                 if (count($pendingMigrations)) {
-                    $this->warn('Pending Migrations for client: ' . $client->db_name); // Warn will output in yellow
+                    $this->warn('Pending Migrations for client: ' . $client->db_name);
                     foreach ($pendingMigrations as $pending) {
-                        // Custom yellow color
-                        $this->line("\033[33m$pending\033[0m"); // ANSI escape code for yellow
+                        $this->line("\033[33m$pending\033[0m"); // ANSI কোড হলুদ রঙের জন্য
                     }
                 } else {
                     $this->info('All migrations are up to date for client: ' . $client->db_name);
                 }
-    
-                // Display completed migrations in green
+            
+                // সম্পন্ন করা মাইগ্রেশনগুলো দেখানো (সবুজ রঙে)
                 $this->info('Completed Migrations for client: ' . $client->db_name);
                 foreach ($completedMigrations as $completed) {
-                    $this->line("\033[32m$completed\033[0m"); // ANSI escape code for green
+                    $this->line("\033[32m$completed\033[0m"); // ANSI কোড সবুজ রঙের জন্য
                 }
             } else {
                 $this->info('Migrating database for client: ' . $client->db_name);
@@ -90,7 +94,6 @@ class MigrateClients extends Command
         }
     
         $this->info('Client database processing completed.');
-    }
-    
+    }    
 
 }
