@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,7 +20,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'phone',
+        'role',
+        'phone_verified_at',
         'password',
+    ];
+
+    protected $casts = [
+        'phone_verified_at' => 'datetime',
     ];
 
     /**
@@ -35,15 +39,16 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
+
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
 
     protected $appends = [
         'avatar'
