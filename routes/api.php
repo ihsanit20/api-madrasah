@@ -72,7 +72,13 @@ Route::prefix('location-bd')->group(function () {
 Route::get('departments', [DepartmentController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', [UserController::class, 'user']);
+
+    Route::get('/user', [UserController::class, 'getUser']);
+    Route::get('/users', [UserController::class, 'getAllUsers']);
+    Route::post('/user', [UserController::class, 'addUser']);
+    Route::put('/user/{id}', [UserController::class, 'updateUser']);
+    Route::delete('/user/{id}', [UserController::class, 'deleteUser']);
+
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::get('/institute/{key}', [InstituteController::class, 'show']);
