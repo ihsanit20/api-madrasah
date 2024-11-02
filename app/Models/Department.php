@@ -8,8 +8,8 @@ use App\Traits\Scopes\ScopeActive;
 use App\Traits\Scopes\ScopeFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Department extends Model
@@ -20,19 +20,24 @@ class Department extends Model
         'name',
         'is_active',
         'description',
+        'author_id',  // Ensure author_id is fillable
     ];
 
     public function department_classes(): HasMany
     {
         return $this->hasMany(DepartmentClass::class)
-            ->orderBy('priority')
-            ;
+            ->orderBy('priority');
     }
 
     public function academic_sessions(): HasMany
     {
         return $this->hasMany(AcademicSession::class)
-            ->orderBy('priority')
-            ;
+            ->orderBy('priority');
+    }
+
+    // Define the user relationship
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id');
     }
 }

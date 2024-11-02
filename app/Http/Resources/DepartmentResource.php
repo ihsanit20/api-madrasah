@@ -10,6 +10,7 @@ class DepartmentResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -17,9 +18,12 @@ class DepartmentResource extends JsonResource
         return [
             "id"            => (int) ($this->id ?? 0),
             "name"          => (string) ($this->name ?? ""),
-            "author_id"     => (int) ($this->author_id ?? 0),
             "is_active"     => (bool) ($this->is_active ?? 0),
             "description"   => (string) ($this->description ?? ""),
+            "author"        => [
+                "id"   => (int) ($this->user->id ?? 0),
+                "name" => (string) ($this->user->name ?? ""),
+            ],
         ];
     }
 }
