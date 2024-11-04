@@ -21,8 +21,6 @@ return new class extends Migration
             $table->unsignedTinyInteger('priority')->default(0);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->unique(['section_id', 'name']);
         });
     }
 

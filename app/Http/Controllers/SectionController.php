@@ -35,7 +35,6 @@ class SectionController extends Controller
             'is_active' => 'boolean',
         ]);
     
-        // Add the current user's ID to the validated data
         $validatedData['added_by'] = auth()->id();
     
         $section = Section::create($validatedData);

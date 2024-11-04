@@ -12,7 +12,7 @@ class ZamatController extends Controller
      */
     public function index()
     {
-        $zamats = Zamat::with(['section', 'added_by:id,name'])->get();
+        $zamats = Zamat::with(['section:id,name', 'added_by:id,name'])->get();
         return response()->json([
             'message' => 'Zamats list fetched successfully',
             'zamats' => $zamats
@@ -26,12 +26,13 @@ class ZamatController extends Controller
     {
         $validatedData = $request->validate([
             'section_id' => 'nullable|exists:sections,id',
-            'added_by' => 'nullable|exists:users,id',
             'name' => 'required|string|unique:zamats,name',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
             'priority' => 'integer|min:0|max:255',
         ]);
+
+        $validatedData['added_by'] = auth()->id();
 
         $zamat = Zamat::create($validatedData);
         return response()->json($zamat, 201);
