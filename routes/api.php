@@ -19,6 +19,7 @@ use App\Http\Controllers\InstituteUpdateController;
 use App\Http\Controllers\LocationBDController;
 use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\UserController;
 
 use Illuminate\Support\Facades\Artisan;
@@ -71,6 +72,10 @@ Route::prefix('location-bd')->group(function () {
 
 Route::get('departments', [DepartmentController::class, 'index']);
 
+Route::get('sections', [SectionController::class, 'index']); 
+Route::get('sections/{section}', [SectionController::class, 'show']); 
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', [UserController::class, 'getUser']);
@@ -83,6 +88,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/institute/{key}', [InstituteController::class, 'show']);
     Route::put('/institute/{key}', [InstituteController::class, 'update']);
+
+    Route::post('sections', [SectionController::class, 'store']); 
+    Route::put('sections/{section}', [SectionController::class, 'update']); 
+    Route::delete('sections/{section}', [SectionController::class, 'destroy']); 
 
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('fees', FeeController::class);
