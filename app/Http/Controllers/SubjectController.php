@@ -22,12 +22,12 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'zamat_id' => 'nullable|exists:zamats,id',
-            'name' => 'required|string',
-            'book_name' => 'nullable|string',
-            'subject_code' => 'required|integer|unique:subjects,subject_code',
-            'priority' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean'
+            'zamat_id'      => 'nullable|exists:zamats,id',
+            'name'          => 'required|string',
+            'book_name'     => 'nullable|string',
+            'subject_code'  => 'required|integer|unique:subjects,subject_code',
+            'priority'      => 'nullable|integer|min:0',
+            'is_active'     => 'nullable|boolean'
         ]);
 
         $validatedData['added_by'] = auth()->id();
@@ -51,12 +51,12 @@ class SubjectController extends Controller
     public function update(Request $request, Subject $subject)
     {
         $validatedData = $request->validate([
-            'zamat_id' => 'nullable|exists:zamats,id',
-            'name' => 'required|string',
-            'book_name' => 'nullable|string',
-            'subject_code' => 'required|integer|unique:subjects,subject_code,' . $subject->id,
-            'priority' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean'
+            'zamat_id'      => 'nullable|exists:zamats,id',
+            'name'          => 'required|string',
+            'book_name'     => 'nullable|string',
+            'subject_code'  => 'required|integer|unique:subjects,subject_code,' . $subject->id,
+            'priority'      => 'nullable|integer|min:0',
+            'is_active'     => 'nullable|boolean'
         ]);
 
         $subject->update($validatedData);
