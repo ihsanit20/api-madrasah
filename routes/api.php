@@ -20,6 +20,7 @@ use App\Http\Controllers\LocationBDController;
 use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZamatController;
 use Illuminate\Support\Facades\Artisan;
@@ -78,6 +79,8 @@ Route::get('sections/{section}', [SectionController::class, 'show']);
 Route::get('zamats', [ZamatController::class, 'index']); 
 Route::get('zamats/{zamat}', [ZamatController::class, 'show']); 
 
+Route::get('/subjects', [SubjectController::class, 'index']);
+Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -96,10 +99,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('sections/{section}', [SectionController::class, 'update']); 
     Route::delete('sections/{section}', [SectionController::class, 'destroy']); 
 
-
     Route::post('zamats', [ZamatController::class, 'store']); 
     Route::put('zamats/{zamat}', [ZamatController::class, 'update']); 
     Route::delete('zamats/{zamat}', [ZamatController::class, 'destroy']); 
+
+    Route::post('/subjects', [SubjectController::class, 'store']);
+    Route::put('/subjects/{subject}', [SubjectController::class, 'update']);
+    Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
 
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('fees', FeeController::class);
