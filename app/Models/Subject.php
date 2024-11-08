@@ -11,7 +11,7 @@ class Subject extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'zamat_id', 'added_by', 'name', 'book_name', 'subject_code', 'priority'
+        'zamat_id', 'added_by', 'name', 'book_name', 'subject_code', 'is_active', 'priority'
     ];
 
     protected $casts = [

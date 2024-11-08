@@ -20,6 +20,7 @@ use App\Http\Controllers\InstituteUpdateController;
 use App\Http\Controllers\LocationBDController;
 use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PackageNameController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
@@ -84,7 +85,10 @@ Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
 
 Route::get('/fee-names', [FeeNameController::class, 'index']);
-Route::get('/fee-names/{id}', [FeeNameController::class, 'show']);
+Route::get('/fee-names/{feeName}', [FeeNameController::class, 'show']);
+
+Route::get('/package-names', [PackageNameController::class, 'index']);
+Route::get('/package-names/{packageName}', [PackageNameController::class, 'show']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -112,9 +116,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
 
     Route::post('/fee-names', [FeeNameController::class, 'store']);
-    Route::put('/fee-names/{id}', [FeeNameController::class, 'update']);
-    Route::patch('/fee-names/{id}', [FeeNameController::class, 'update']);
-    Route::delete('/fee-names/{id}', [FeeNameController::class, 'destroy']);
+    Route::put('/fee-names/{feeName}', [FeeNameController::class, 'update']);
+    Route::patch('/fee-names/{feeName}', [FeeNameController::class, 'update']);
+    Route::delete('/fee-names/{feeName}', [FeeNameController::class, 'destroy']);
+
+    Route::post('/package-names', [PackageNameController::class, 'store']);
+    Route::put('/package-names/{packageName}', [PackageNameController::class, 'update']);
+    Route::delete('/package-names/{packageName}', [PackageNameController::class, 'destroy']);
 
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('fees', FeeController::class);
