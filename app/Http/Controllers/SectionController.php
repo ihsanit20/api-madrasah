@@ -65,7 +65,6 @@ class SectionController extends Controller
             'name' => 'required|string|unique:sections,name,' . $section->id,
             'description' => 'nullable|string',
             'is_active' => 'boolean',
-            'added_by' => 'nullable|exists:users,id',
         ]);
 
         $section->update($validatedData);

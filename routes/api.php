@@ -14,6 +14,7 @@ use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentClassSubjectController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\FeeNameController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\InstituteUpdateController;
 use App\Http\Controllers\LocationBDController;
@@ -82,6 +83,9 @@ Route::get('zamats/{zamat}', [ZamatController::class, 'show']);
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
 
+Route::get('/fee-names', [FeeNameController::class, 'index']);
+Route::get('/fee-names/{id}', [FeeNameController::class, 'show']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', [UserController::class, 'getUser']);
@@ -106,6 +110,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/subjects', [SubjectController::class, 'store']);
     Route::put('/subjects/{subject}', [SubjectController::class, 'update']);
     Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
+
+    Route::post('/fee-names', [FeeNameController::class, 'store']);
+    Route::put('/fee-names/{id}', [FeeNameController::class, 'update']);
+    Route::patch('/fee-names/{id}', [FeeNameController::class, 'update']);
+    Route::delete('/fee-names/{id}', [FeeNameController::class, 'destroy']);
 
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('fees', FeeController::class);

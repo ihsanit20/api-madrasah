@@ -15,8 +15,11 @@ class Zamat extends Model
         'added_by',
         'name',
         'description',
-        'is_active',
         'priority'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /**

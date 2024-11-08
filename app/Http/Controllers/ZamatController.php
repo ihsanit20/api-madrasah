@@ -53,7 +53,6 @@ class ZamatController extends Controller
     {
         $validatedData = $request->validate([
             'section_id' => 'nullable|exists:sections,id',
-            'added_by' => 'nullable|exists:users,id',
             'name' => 'required|string|unique:zamats,name,' . $zamat->id,
             'description' => 'nullable|string',
             'is_active' => 'boolean',
