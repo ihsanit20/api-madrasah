@@ -22,6 +22,7 @@ use App\Http\Controllers\MonthlyFeeController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PackageNameController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZamatController;
@@ -90,6 +91,10 @@ Route::get('/fee-names/{feeName}', [FeeNameController::class, 'show']);
 Route::get('/package-names', [PackageNameController::class, 'index']);
 Route::get('/package-names/{packageName}', [PackageNameController::class, 'show']);
 
+Route::get('/sessions', [SessionController::class, 'index']);
+Route::get('/sessions/{id}', [SessionController::class, 'show']);
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', [UserController::class, 'getUser']);
@@ -123,6 +128,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/package-names', [PackageNameController::class, 'store']);
     Route::put('/package-names/{packageName}', [PackageNameController::class, 'update']);
     Route::delete('/package-names/{packageName}', [PackageNameController::class, 'destroy']);
+
+    Route::post('/sessions', [SessionController::class, 'store']);
+    Route::put('/sessions/{id}', [SessionController::class, 'update']);
+    Route::delete('/sessions/{id}', [SessionController::class, 'destroy']);
 
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('fees', FeeController::class);
