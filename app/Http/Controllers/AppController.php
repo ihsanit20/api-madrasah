@@ -58,12 +58,12 @@ class AppController extends Controller
         // should be remove
         $data["institute"] = [
             "name" => [
-                "english"   => "MSI Institute" . " : " . (self::$client["name"] ?? ""),
+                "english"   => "Institute" . " : " . (self::$client["name"] ?? ""),
                 "bengali"   => "মাদরাসার নাম",
                 "arabic"    => "الاسم عربي",
             ],
-            "icon"  => "https://ui-avatars.com/api/?length=1&name=MSI+Institute",
-            "logo"  => "https://ui-avatars.com/api/?length=1&name=MSI+Institute",
+            "icon"  => "https://ui-avatars.com/api/?length=1&name=Institute",
+            "logo"  => "https://ui-avatars.com/api/?length=1&name=Institute",
             "address"       => "House No, Road No, Village name",
             "post_office"   => "Post office",
             "area"          => "Upazilla or Area",
