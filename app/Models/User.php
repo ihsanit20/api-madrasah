@@ -22,8 +22,8 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'phone_verified_at' => 'datetime',
         'is_active' => 'boolean',
+        'phone_verified_at' => 'datetime',
     ];
 
 

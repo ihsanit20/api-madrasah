@@ -26,7 +26,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Your account is inactive. Please contact support.'], 401);
         }
 
-        $token = $user->createToken('admin-token')->plainTextToken;
+        $token = $user->createToken('AUTH_TOKEN')->plainTextToken;
 
         return response()->json([
             'message' => 'Admin/User logged in successfully',

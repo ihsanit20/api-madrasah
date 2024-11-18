@@ -21,8 +21,6 @@ class Session extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'starting_date' => 'date',
-        'ending_date' => 'date',
     ];
 
     public function section()
