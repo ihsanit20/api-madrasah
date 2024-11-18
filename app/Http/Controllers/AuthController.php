@@ -4,39 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Student;
 
 class AuthController extends Controller
 {
-    // Admin Login API
     public function adminLogin(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'phone' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('phone', 'password');
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('admin-token')->plainTextToken;
-            return response()->json([
-                'message' => 'Admin/User logged in successfully',
-                'user' => $user,
-                'token' => $token
-            ], 201);
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Your phone or password is incorrect'], 401);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        $user = Auth::user();
+
+        if (!$user->is_active) {
+            return response()->json(['message' => 'Your account is inactive. Please contact support.'], 401);
+        }
+
+        $token = $user->createToken('admin-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Admin/User logged in successfully',
+            'token' => $token,
+            'user' => $user,
+        ], 200);
     }
 
-    // Admin Register API
     public function adminRegister(Request $request)
     {
-        if(User::count()) {
-            return response('Not Found!', 404);
+        if (User::count()) {
+            return response()->json(['message' => 'Admin already registered.'], 403);
         }
 
         $request->validate([
@@ -45,11 +47,10 @@ class AuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // নতুন অ্যাডমিন ইউজার তৈরি করা
         $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
         return response()->json([
@@ -58,7 +59,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Student Login API
     public function studentLogin(Request $request)
     {
         $request->validate([
@@ -78,10 +78,10 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Student logged in successfully',
                 'student' => $student,
-                'token' => $token
-            ], 201);
+                'token' => $token,
+            ], 200);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 }

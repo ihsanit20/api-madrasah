@@ -46,7 +46,9 @@ Route::get('/', function () {
 }); 
 
 Route::post('/admin-register', [AuthController::class, 'adminRegister']);
+
 Route::post('/admin-login', [AuthController::class, 'adminLogin']);
+
 Route::post('/student-login', [AuthController::class, 'studentLogin']);
 
 
